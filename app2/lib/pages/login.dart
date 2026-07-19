@@ -1,5 +1,11 @@
+import 'package:app2/cupitstate/cupit.dart';
+import 'package:app2/cupitstate/states.dart';
+import 'package:app2/pages/notepage.dart';
+import 'package:app2/pages/reg.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/homepage.dart';
+import 'package:app2/pages/homepage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app2/pages/reg.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -10,16 +16,20 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   GlobalKey<FormState> keyform =GlobalKey<FormState>();
+    TextEditingController email=TextEditingController();
+    TextEditingController password=TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    cubitclass cupit=BlocProvider.of<cubitclass>(context);
+  
+    return BlocBuilder<cubitclass,States>(builder: (context,state){return Scaffold(
       appBar: AppBar(title: const Text("login page"),centerTitle: true,foregroundColor: const Color.fromARGB(255, 223, 22, 133),backgroundColor: const Color.fromARGB(84, 223, 22, 133),),
       body:Form(
         key:keyform,
         child:   Center(child: 
          Padding(
            padding: const EdgeInsets.all(25),
-           child: Column(
+           child:  Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const CircleAvatar(
@@ -27,7 +37,7 @@ class _LoginState extends State<Login> {
                 backgroundImage: AssetImage("assets/images/image1.jpg"),),
                 SizedBox(height: 18,),
                 TextFormField(
-
+                 controller: email,
                   validator: (value) {
                     if(value!.isEmpty||!value.contains("@"))
                     return "please enter correct email";
@@ -39,6 +49,7 @@ class _LoginState extends State<Login> {
                 ),
               const SizedBox(height: 20,),
               TextFormField(
+                 controller: password,
                   validator: (value) {
                     if(value!.isEmpty||value!.length<8)
                     return"please enter password contain digits";
@@ -46,17 +57,30 @@ class _LoginState extends State<Login> {
                     
                   },
                   decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
-                  label:Text("password"),icon: Icon(Icons.password),hintText: "please enter email"),
+                  label:Text("password"),suffixIcon: Icon(Icons.password),hintText: "please enter email"),
                   
                 ),SizedBox(height: 18,),
-                ElevatedButton(onPressed: (){
-                if(keyform.currentState!.validate()) {
-                  Navigator.push(context,MaterialPageRoute(builder: (context){return Homepage();}));
+                ElevatedButton(onPressed: ()async{
+                 
+                if(keyform.currentState!.validate() ) {
+                
+                  await cupit.login(email.text, password.text);
+                  
+                  Navigator.push(context,MaterialPageRoute(builder: (context){return Notepage();}));
+                  
                 }
-                }, child: Text("login"))
-            ]),
-         ))     
-    ));
+                }, child: Text("login")),
+                TextButton(onPressed: (){
+                  Navigator.push(context,MaterialPageRoute(builder: (context){return Registers();}));
+
+                }, child: Text("do not have user"))
+                 ])
+                
+                  
+                )
+            ),
+         ))  ; }  
+    );
   }
 
   String get newMethod => "save";
