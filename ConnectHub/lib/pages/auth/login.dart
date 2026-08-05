@@ -1,12 +1,11 @@
-import 'package:app2/cupitstate/cupit.dart';
-import 'package:app2/cupitstate/states.dart';
-import 'package:app2/pages/chat.dart';
-import 'package:app2/pages/notepage.dart';
-import 'package:app2/pages/reg.dart';
+import 'package:ConnectHub/cupitstate/ai/cupitai.dart';
+import 'package:ConnectHub/cupitstate/auth/cupitauth.dart';
+import 'package:ConnectHub/cupitstate/auth/statesauth.dart';
+import 'package:ConnectHub/pages/auth/forgetpassword.dart';
+import 'package:ConnectHub/pages/chatbot.dart';
+import 'package:ConnectHub/pages/auth/reg.dart';
 import 'package:flutter/material.dart';
-import 'package:app2/pages/homepage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app2/pages/reg.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -35,7 +34,7 @@ class _LoginState extends State<Login> {
             children: [
               const CircleAvatar(
                 radius: 70,
-                backgroundImage: AssetImage("assets/images/image1.jpg"),),
+                backgroundImage: AssetImage("C:/Users/israa/Desktop/ffluter/ConnectHub/assets/images/logoapp.png"),),
                 SizedBox(height: 18,),
                 TextFormField(
                  controller: email,
@@ -52,7 +51,7 @@ class _LoginState extends State<Login> {
               TextFormField(
                  controller: password,
                   validator: (value) {
-                    if(value!.isEmpty||value!.length<8)
+                    if(value!.isEmpty||value.length<8)
                     return"please enter password contain digits";
                     return null;
                     
@@ -61,16 +60,34 @@ class _LoginState extends State<Login> {
                   label:Text("password"),suffixIcon: Icon(Icons.password),hintText: "please enter email"),
                   
                 ),SizedBox(height: 18,),
+                state is lodinglogin?CircularProgressIndicator(color: const Color.fromARGB(255, 183, 232, 255),):Text(""),
+                state is errorlogin?Text("خطا في الايميل او كلمه المرور",style: TextStyle(color: const Color.fromARGB(255, 255, 154, 147)),):Text(""),
                 ElevatedButton(onPressed: ()async{
                  
-                if(keyform.currentState!.validate() ) {
+              
+                        if (keyform.currentState!.validate()) {
+                          // 1. تنفيذ الدخول وانتظار النتيجة
+                          await cupit.login(email.text.trim(), password.text.trim());
+                          
+                          // 2. التحقق من الستيت الحالية بعد انتهاء الدالة والانتقال
+                          if (cupit.state is sucssfullogin) {
+                            if (!context.mounted) return;
+                            
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return BlocProvider(create: (context)=>Cupitai(),child:  chatpot());
+                              }),
+                            );
+                          }
+                        }
+                    
                 
-                  await cupit.login(email.text, password.text);
-                  
-                  Navigator.push(context,MaterialPageRoute(builder: (context){return massege();}));
-                  
-                }
-                }, child: Text("login")),
+                },child: Text("login"),),
+                TextButton(onPressed: (){
+                  Navigator.push(context,MaterialPageRoute(builder: (context){return Forgetpassword();}));
+
+                }, child: Text("forget password?")),
                 TextButton(onPressed: (){
                   Navigator.push(context,MaterialPageRoute(builder: (context){return Registers();}));
 

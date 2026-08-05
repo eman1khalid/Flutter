@@ -1,30 +1,31 @@
-import 'package:app2/cupitstate/cupit.dart';
-import 'package:app2/cupitstate/states.dart';
-import 'package:app2/pages/chat.dart';
-import 'package:app2/pages/notepage.dart';
-import 'package:app2/pages/reg.dart';
+import 'package:ConnectHub/cupitstate/auth/cupitauth.dart';
+import 'package:ConnectHub/cupitstate/auth/statesauth.dart';
+import 'package:ConnectHub/pages/auth/reg.dart';
 import 'package:flutter/material.dart';
-import 'package:app2/pages/homepage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app2/pages/reg.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Forgetpassword extends StatefulWidget {
+  const Forgetpassword({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Forgetpassword> createState() => _ForgetpasswordState();
 }
 
-class _LoginState extends State<Login> {
+class _ForgetpasswordState extends State<Forgetpassword> {
   GlobalKey<FormState> keyform =GlobalKey<FormState>();
     TextEditingController email=TextEditingController();
-    TextEditingController password=TextEditingController();
+    void dispose() {
+    email.dispose();
+    super.dispose();
+  }
+   
   @override
   Widget build(BuildContext context) {
     cubitclass cupit=BlocProvider.of<cubitclass>(context);
+
   
     return BlocBuilder<cubitclass,States>(builder: (context,state){return Scaffold(
-      appBar: AppBar(title: const Text("login page"),centerTitle: true,foregroundColor: const Color.fromARGB(255, 223, 22, 133),backgroundColor: const Color.fromARGB(84, 223, 22, 133),),
+      appBar: AppBar(title: const Text("Forgetpassword page"),centerTitle: true,foregroundColor: const Color.fromARGB(255, 223, 22, 133),backgroundColor: const Color.fromARGB(84, 223, 22, 133),),
       body:Form(
         key:keyform,
         child:   Center(child: 
@@ -35,7 +36,7 @@ class _LoginState extends State<Login> {
             children: [
               const CircleAvatar(
                 radius: 70,
-                backgroundImage: AssetImage("assets/images/image1.jpg"),),
+                backgroundImage: AssetImage("assets/images/logoapp.png"),),
                 SizedBox(height: 18,),
                 TextFormField(
                  controller: email,
@@ -49,33 +50,31 @@ class _LoginState extends State<Login> {
                   
                 ),
               const SizedBox(height: 20,),
-              TextFormField(
-                 controller: password,
-                  validator: (value) {
-                    if(value!.isEmpty||value!.length<8)
-                    return"please enter password contain digits";
-                    return null;
-                    
-                  },
-                  decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
-                  label:Text("password"),suffixIcon: Icon(Icons.password),hintText: "please enter email"),
-                  
-                ),SizedBox(height: 18,),
                 ElevatedButton(onPressed: ()async{
                  
                 if(keyform.currentState!.validate() ) {
                 
-                  await cupit.login(email.text, password.text);
+                  await cupit.Forgetpassword(email.text.trim());
                   
-                  Navigator.push(context,MaterialPageRoute(builder: (context){return massege();}));
+                 
                   
                 }
+                }, child: Text("send your email")),
+                state is loadingforg?CircularProgressIndicator(color: const Color.fromARGB(255, 183, 232, 255),):Text(""),
+                state is sucssforg?Text("تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني",style: TextStyle(color: const Color.fromARGB(255, 235, 242, 255),backgroundColor: Colors.greenAccent),)
+                :Text(""),
+                state is errorforg?Text("مشكله في الارسال",style: TextStyle(color: const Color.fromARGB(255, 255, 154, 147)),):Text(""),
+                
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+
                 }, child: Text("login")),
                 TextButton(onPressed: (){
                   Navigator.push(context,MaterialPageRoute(builder: (context){return Registers();}));
 
-                }, child: Text("do not have user"))
+                }, child: Text("do not have user")),
                  ])
+                 
                 
                   
                 )

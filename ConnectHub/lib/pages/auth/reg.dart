@@ -1,21 +1,18 @@
-import 'package:app2/cupitstate/cupit.dart';
-import 'package:app2/cupitstate/states.dart';
-import 'package:app2/pages/chat.dart';
-import 'package:app2/pages/notepage.dart';
-import 'package:app2/pages/reg.dart';
+import 'package:ConnectHub/cupitstate/auth/cupitauth.dart';
+import 'package:ConnectHub/cupitstate/auth/statesauth.dart';
 import 'package:flutter/material.dart';
-import 'package:app2/pages/homepage.dart';
+import 'package:ConnectHub/pages/homepage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app2/pages/reg.dart';
+import 'package:ConnectHub/pages/auth/login.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Registers extends StatefulWidget {
+  const Registers({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Registers> createState() => _RegistersState();
 }
 
-class _LoginState extends State<Login> {
+class _RegistersState extends State<Registers> {
   GlobalKey<FormState> keyform =GlobalKey<FormState>();
     TextEditingController email=TextEditingController();
     TextEditingController password=TextEditingController();
@@ -24,7 +21,7 @@ class _LoginState extends State<Login> {
     cubitclass cupit=BlocProvider.of<cubitclass>(context);
   
     return BlocBuilder<cubitclass,States>(builder: (context,state){return Scaffold(
-      appBar: AppBar(title: const Text("login page"),centerTitle: true,foregroundColor: const Color.fromARGB(255, 223, 22, 133),backgroundColor: const Color.fromARGB(84, 223, 22, 133),),
+      appBar: AppBar(title: const Text("Registers page"),centerTitle: true,foregroundColor: const Color.fromARGB(255, 223, 22, 133),backgroundColor: const Color.fromARGB(84, 223, 22, 133),),
       body:Form(
         key:keyform,
         child:   Center(child: 
@@ -52,7 +49,7 @@ class _LoginState extends State<Login> {
               TextFormField(
                  controller: password,
                   validator: (value) {
-                    if(value!.isEmpty||value!.length<8)
+                    if(value!.isEmpty||value.length<8)
                     return"please enter password contain digits";
                     return null;
                     
@@ -65,16 +62,16 @@ class _LoginState extends State<Login> {
                  
                 if(keyform.currentState!.validate() ) {
                 
-                  await cupit.login(email.text, password.text);
+                  await cupit.reg(email.text, password.text);
                   
-                  Navigator.push(context,MaterialPageRoute(builder: (context){return massege();}));
+                  Navigator.push(context,MaterialPageRoute(builder: (context){return Homepage();}));
                   
                 }
-                }, child: Text("login")),
+                }, child: Text("Registers")),
                 TextButton(onPressed: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context){return Registers();}));
+                  Navigator.push(context,MaterialPageRoute(builder: (context){return Login();}));
 
-                }, child: Text("do not have user"))
+                }, child: Text("do you have user"))
                  ])
                 
                   
