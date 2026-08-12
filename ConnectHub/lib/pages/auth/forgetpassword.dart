@@ -28,58 +28,62 @@ class _ForgetpasswordState extends State<Forgetpassword> {
       appBar: AppBar(title: const Text("Forgetpassword page"),centerTitle: true,foregroundColor: const Color.fromARGB(255, 123, 22, 223),backgroundColor: const Color.fromARGB(82, 29, 18, 244),),
       body:Form(
         key:keyform,
-        child:   Center(child: 
-         Padding(
-           padding: const EdgeInsets.all(25),
-           child:  Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CircleAvatar(
-                radius: 70,
-                backgroundImage: AssetImage("assets/images/logoapp.png"),),
-                const SizedBox(height: 18,),
-                TextFormField(
-                 controller: email,
-                  validator: (value) {
-                    if(value!.isEmpty||!value.contains("@")) {
-                      return "please enter correct email";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
-                  label:Text("email"),suffixIcon: Icon(Icons.email),hintText: "please enter email"),
+        child:  Padding(
+          
+          padding: const EdgeInsets.all(30),
+          child: ListView(children: [ Center(child: 
+           Padding(
+             padding: const EdgeInsets.all(8),
+             child:  Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [SizedBox(height: 90,),
+                const CircleAvatar(
+                  radius: 70,
+                  backgroundImage: AssetImage("assets/images/logoapp.png"),),
+                  const SizedBox(height: 18,),
+                  TextFormField(
+                   controller: email,
+                    validator: (value) {
+                      if(value!.isEmpty||!value.contains("@")) {
+                        return "please enter correct email";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
+                    label:Text("email"),suffixIcon: Icon(Icons.email),hintText: "please enter email"),
+                    
+                  ),
+                const SizedBox(height: 20,),
+                  ElevatedButton(onPressed: ()async{
+                   
+                  if(keyform.currentState!.validate() ) {
                   
-                ),
-              const SizedBox(height: 20,),
-                ElevatedButton(onPressed: ()async{
-                 
-                if(keyform.currentState!.validate() ) {
-                
-                  await cupit.Forgetpassword(email.text.trim());
+                    await cupit.Forgetpassword(email.text.trim());
+                    
+                   
+                    
+                  }
+                  }, child: Text("send your email")),
+                  state is loadingforg?CircularProgressIndicator(color: const Color.fromARGB(255, 183, 232, 255),):SizedBox.shrink(),
+                  state is sucssforg?Text("تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني",style: TextStyle(color: const Color.fromARGB(255, 235, 242, 255),backgroundColor: Colors.greenAccent),)
+                  :SizedBox.shrink(),
+                  state is errorforg?Text("مشكله في الارسال",style: TextStyle(color: const Color.fromARGB(255, 255, 154, 147)),):SizedBox.shrink(),
                   
-                 
+                  TextButton(onPressed: (){
+                    Navigator.pop(context);
+          
+                  }, child: Text("login")),
+                  TextButton(onPressed: (){
+                    Navigator.push(context,MaterialPageRoute(builder: (context){return Registers();}));
+          
+                  }, child: Text("do not have user")),
+                   ])
+                   
                   
-                }
-                }, child: Text("send your email")),
-                state is loadingforg?CircularProgressIndicator(color: const Color.fromARGB(255, 183, 232, 255),):Text(""),
-                state is sucssforg?Text("تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني",style: TextStyle(color: const Color.fromARGB(255, 235, 242, 255),backgroundColor: Colors.greenAccent),)
-                :Text(""),
-                state is errorforg?Text("مشكله في الارسال",style: TextStyle(color: const Color.fromARGB(255, 255, 154, 147)),):Text(""),
-                
-                TextButton(onPressed: (){
-                  Navigator.pop(context);
-
-                }, child: Text("login")),
-                TextButton(onPressed: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context){return Registers();}));
-
-                }, child: Text("do not have user")),
-                 ])
-                 
-                
-                  
-                )
-            ),
+                    
+                  )
+              )]),
+        ),
          ))  ; }  
     );
   }

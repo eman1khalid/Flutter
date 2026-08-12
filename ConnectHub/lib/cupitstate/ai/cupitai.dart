@@ -10,7 +10,7 @@ class Cupitai extends Cubit<Statesai> {
   final List<Map<String, String>> messages = [];
    
 
-  final String apiKey = "AQ.Ab8RN6L0OR6pgj0JtnLJj8SuP7Tt-B2zTocB6Voy2dqaDjrNkA";
+  final String apiKey = "AQ.Ab8RN6IyvWzPsBCA292ZPpR4bjh8UA_euBlw70P4j1SnPU108A";
 
   Future<void> getPostIdea(String userPrompt) async {
     messages.add({"sender": "user", "text": userPrompt});

@@ -1,6 +1,8 @@
 
+import 'package:ConnectHub/globalvariable.dart';
+import 'package:ConnectHub/navigationbar.dart';
 import 'package:ConnectHub/pages/auth/login.dart';
-import 'package:ConnectHub/pages/homepage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -16,16 +18,21 @@ class _SplashState extends State<Splash> {
   void initState() {
     // TODO: implement initStategit status
     super.initState();
-    Future.delayed(Duration(seconds: 5),(){
+    Future.delayed(Duration(seconds: 5),()async{
       var user=FirebaseAuth.instance.currentUser;
-      if(user==null){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder:(context){return Login();}));}
+      if(user!=null){
+        DocumentSnapshot snapshot=await FirebaseFirestore.instance.collection("users").doc(userid).get();
+    if(snapshot.exists)
+    {var data=snapshot.data() as Map<String,dynamic>;
+    username=data["name"];
+    imageuser=data["imagrurl"];
+      Navigator.pushReplacement(context, MaterialPageRoute(builder:(context){return navbar();}));}
       else{
-       Navigator.pushReplacement(context, MaterialPageRoute(builder:(context){return Homepage();}));
+       Navigator.pushReplacement(context, MaterialPageRoute(builder:(context){return Login();}));
       }
      
       
-    });
+    }});
   }
   @override
   Widget build(BuildContext context) {

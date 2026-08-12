@@ -2,7 +2,7 @@ import 'package:ConnectHub/cupitstate/ai/cupitai.dart';
 import 'package:ConnectHub/cupitstate/ai/statesai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uuid/uuid.dart' show Uuid; // تأكد من إضافة مكتبة uuid أو استخدام الطريقة البديلة
+
 
 class chatpot extends StatefulWidget {
   const chatpot({super.key});
@@ -12,23 +12,13 @@ class chatpot extends StatefulWidget {
 }
 
 class _chatpotState extends State<chatpot> {
-  final GlobalKey<FormState> keyform = GlobalKey<FormState>();
   final TextEditingController massegeController = TextEditingController(); 
-  bool isLoading = false;
-  
-  // توليد معرف جلسة فريد وثابت أثناء فتح الصفحة
-  final String sessionId = const Uuid().v4();
-
-  // قائمة لحفظ رسائل الشات (سواء رسالة المستخدم أو رد الـ AI)
-  
-
-  
-
-  @override
+ @override
   Widget build(BuildContext context) {
     return BlocBuilder <Cupitai,Statesai>(builder: (context,state){
   
         return Scaffold(
+          resizeToAvoidBottomInset:true,
           appBar: AppBar(
             title: const Text("AI Chatbot🤖"),
             centerTitle: true,

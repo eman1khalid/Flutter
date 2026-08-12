@@ -1,137 +1,78 @@
-import 'package:ConnectHub/cupitstate/auth/cupitauth.dart';
-import 'package:ConnectHub/cupitstate/auth/statesauth.dart';
-import 'package:ConnectHub/pages/auth/login.dart';
-import 'package:ConnectHub/pages/auth/reg.dart';
+import 'package:ConnectHub/pages/postdetails.dart';
+import 'package:ConnectHub/widget/postcard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
+// ignore: must_be_immutable
 class Homepage extends StatefulWidget {
-    Homepage({super.key});
+  String? postid;
+  String? title;
+  String?description;
+  String?image;
+   Homepage({this.postid,this.title,this.description,this.image,super.key});
 
   @override
-  State<Homepage> createState() => Homepagee();
+  State<Homepage> createState() => _HomepageState();
 }
 
-class Homepagee extends State<Homepage> {
-  int count=0;
+class _HomepageState extends State<Homepage> {
   
   @override
   Widget build(BuildContext context) {
-    cubitclass cupit=BlocProvider.of<cubitclass>(context);
     return Scaffold(
-        backgroundColor:   Color.fromARGB(255, 255, 223, 252),
-        appBar: AppBar(title:  Center(child: Text("profile"),),),
-        body: BlocBuilder<cubitclass,States>(builder:(context,state){
+      appBar: AppBar(title: const Text("Homepage"),),
+       body: 
+       StreamBuilder<QuerySnapshot>(stream: FirebaseFirestore.instance.collection("posts").snapshots(),
+       builder: (context,snapshot){
+       if (snapshot.hasError){return const Center(child: Icon(Icons.error,color: Color.fromARGB(209, 244, 67, 54),));}
+       if(snapshot.connectionState==ConnectionState.waiting) {
+         return const Center(child: CircularProgressIndicator());
+       }
+       if (snapshot.data!.docs.isEmpty) {
+         return const Center(child: Text("no posts"));
+       } else{
+        var data=snapshot.data!.docs;
+        data.shuffle();
 
-          if(state is lodinglogin ||state is lodingreg)return Text("is loading");
+        return ListView.builder(
+        itemCount:data.length ,
+        itemBuilder: (context,index){
+        var sample= data[index].data() as Map<String,dynamic>;
+        var postid=data[index].id;
+        var useridd=sample["userid"];
+               return FutureBuilder<DocumentSnapshot>(future: FirebaseFirestore.instance.collection("users").doc(useridd).get(), builder: 
+               (context,usnapshot){
+               if (usnapshot.connectionState==ConnectionState.waiting)return const SizedBox.shrink();
+               if(usnapshot.hasError)return const Text("error");
+               if(!usnapshot.data!.exists)return const Text("empty");
+               var datauser=usnapshot.data!.data() as Map <String,dynamic>;
+               return GestureDetector(child:Postcard(
+              postId:postid,
+              userId:useridd,
+              username:datauser["name"],
+              imageprofile:datauser["imagrurl"],
+              posttitle:sample["title"],
+              postdescription:sample["description"],
+              postImageUrl:sample["image"],
+              time:sample["time"]!=null?(sample["time"] as Timestamp).toDate().toString():"just now",
+              likesCount:sample["likesCount"].toString(),
+              likesUsers:sample["likesUsers"],
+        
+              ),
+          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>
+          Postdetails(
+            postId:postid,
             
-          if(state is sucssfullogin ||state is sucssfulreg){
-          return Center(child: 
-       Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-            CircleAvatar(
-            radius: 70,
-            backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRR0njhYvua2lQRzTCVfLEKg1tZVkAU3QLbbRgH48R4Q&s=10"),),
-            SizedBox(height: 20,),
-          Row(
-           mainAxisAlignment: MainAxisAlignment.center, 
-          children: [
-          Center(child:Container(
-            width: 100,
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius:BorderRadius.circular(25),
-              border: Border.all(
-                style: BorderStyle.solid,
-                color:   Color.fromARGB(255, 105, 95, 65)),
-                color:  Color.fromARGB(255, 230, 221, 167)
-              ),
-               child:  Center(child: Text("eman") )
-          )),
-            Icon(Icons.person )
-        ],
-       ),
-          SizedBox(height: 20,),
-          Row(
-           mainAxisAlignment: MainAxisAlignment.center, 
-          children: [
-          Center(child:Container(
-            width: 100,
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius:BorderRadius.circular(25),
-              border: Border.all(
-                style: BorderStyle.solid,
-                color:   Color.fromARGB(255, 105, 95, 65)),
-                color:  Color.fromARGB(255, 230, 221, 167)
-              ),
-               child:  Center(child: Text("30/4/2004") )
-          )),
-            Icon(Icons.date_range )
-        ],
-       ),
-          SizedBox(height: 20,),
-          Row(
-           mainAxisAlignment: MainAxisAlignment.center, 
-          children: [
-          Center(child:Container(
-            width: 100,
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius:BorderRadius.circular(25),
-              border: Border.all(
-                style: BorderStyle.solid,
-                color:   Color.fromARGB(255, 105, 95, 65)),
-                color:  Color.fromARGB(255, 230, 221, 167)
-              ),
-               child:  Center(child: Text("flutter") )
-          )),
-            Icon(Icons.flutter_dash_rounded )
-        ],
-       ),
-         SizedBox(height: 20,),
-       Row(
-           mainAxisAlignment: MainAxisAlignment.center, 
-          children: [
-          Center(child:Container(
-            width: 100,
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius:BorderRadius.circular(25),
-              border: Border.all(
-                style: BorderStyle.solid,
-                color:   Color.fromARGB(255, 105, 95, 65)),
-                color:  Color.fromARGB(255, 230, 221, 167)
-              ),
-               child:  Center(child: Text(count.toString()) )
-          )),
-            Icon(Icons.thumb_up )
-        ],
-       ),
-         SizedBox(height: 20,),
-       Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-         children: [
-           ElevatedButton(onPressed: ()async{
-            await cupit.logout();
-            Navigator.push(context,MaterialPageRoute(builder: (context){return Login();}));
-           
-           }, child:   Text("logout account")),
-           ElevatedButton(onPressed: ()async{
-            await cupit.delet();
-            Navigator.push(context,MaterialPageRoute(builder: (context){return Registers();}));
-           
-            
-           }, child:   Text("delet account"))
-         ],
-       )]),
-    );}else if(state is errorlogin)
-    return SizedBox(child: TextButton(onPressed: (){ Navigator.pop(context);},child: Text("do not found user return page"),));
-    else if (state is errorreg)
-    return SizedBox(child: TextButton(onPressed: (){ Navigator.pop(context);},child: Text("user is found"),));
-    else 
-    return SizedBox(child: TextButton(onPressed: (){ Navigator.pop(context);},child: Text("error"),));}
-    ));
-  }
+          )));},);
+          
+
+        
+
+  });});}}
+  ),
+  
+ 
+);
+
+}
 }
